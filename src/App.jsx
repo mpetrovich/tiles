@@ -20,11 +20,28 @@ function Board() {
 
     console.log(board)
 
+    const moveTile = (fromRow, fromCol) => {
+        const [toRow, toCol] = findAdjacentSpace(board, fromRow, fromCol)
+        if (toRow !== null) {
+            board[toRow][toCol] = board[fromRow][fromCol]
+            board[fromRow][fromCol] = null
+            setBoard(board.slice())
+        }
+    }
+
     return (
         <StyledBoard style={{ width: cols * tileWidth, height: rows * tileHeight }}>
             {board.map((cols, row) =>
                 cols.map((tile, col) => (
-                    <Tile tile={tile} row={row} col={col} width={tileWidth} height={tileHeight} key={col} />
+                    <Tile
+                        tile={tile}
+                        row={row}
+                        col={col}
+                        width={tileWidth}
+                        height={tileHeight}
+                        key={col}
+                        onClick={() => moveTile(row, col)}
+                    />
                 ))
             )}
         </StyledBoard>
@@ -39,14 +56,34 @@ function initBoard(rows, cols) {
     return board
 }
 
+function findAdjacentSpace(board, row, col) {
+    if (isSpaceFree(board, row - 1, col)) {
+        return [row - 1, col]
+    }
+    if (isSpaceFree(board, row + 1, col)) {
+        return [row + 1, col]
+    }
+    if (isSpaceFree(board, row, col - 1)) {
+        return [row, col - 1]
+    }
+    if (isSpaceFree(board, row, col + 1)) {
+        return [row, col + 1]
+    }
+    return [null, null]
+}
+
+function isSpaceFree(board, row, col) {
+    return 0 <= row && row < board.length && 0 <= col && col < board[0].length && board[row][col] === null
+}
+
 const StyledBoard = styled.div`
     position: relative;
     user-select: none;
 `
 
-function Tile({ tile, row, col, width, height }) {
+function Tile({ tile, row, col, width, height, ...props }) {
     return (
-        <StyledTile tile={tile} row={row} col={col} width={width} height={height}>
+        <StyledTile tile={tile} row={row} col={col} width={width} height={height} {...props}>
             {tile}
         </StyledTile>
     )
