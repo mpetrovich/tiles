@@ -157,7 +157,6 @@ function isComplete(board) {
 
 const StyledBoard = styled.div`
     position: relative;
-    user-select: none;
     background: ${(props) => `url("${props.image}")`};
     background-size: 100%;
 `
@@ -189,4 +188,5 @@ const StyledTile = styled.div`
     text-shadow: 0 0 2px #000;
     cursor: ${(props) => (props.tile !== null ? "pointer" : "default")};
     opacity: ${(props) => (props.completed ? 0 : 1)};
+    user-select: none;
 `
