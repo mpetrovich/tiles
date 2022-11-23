@@ -28,6 +28,7 @@ function Board({ rows, cols }) {
     const [image, setImage] = useState(zebra)
     const tileWidth = 100
     const tileHeight = 100
+    const completed = isComplete(board)
 
     console.log(board)
 
@@ -41,7 +42,7 @@ function Board({ rows, cols }) {
     }
 
     return (
-        <StyledBoard complete={isComplete(board)} style={{ width: cols * tileWidth, height: rows * tileHeight }}>
+        <StyledBoard image={image} completed={completed} style={{ width: cols * tileWidth, height: rows * tileHeight }}>
             {board.map((cols, row) =>
                 cols.map((tile, col) => (
                     <Tile
@@ -53,6 +54,7 @@ function Board({ rows, cols }) {
                         image={image}
                         numRows={board.length}
                         numCols={board[0].length}
+                        completed={completed}
                         key={col}
                         onClick={() => moveTile(row, col)}
                     />
@@ -107,7 +109,8 @@ function isComplete(board) {
 const StyledBoard = styled.div`
     position: relative;
     user-select: none;
-    outline: ${(props) => (props.complete ? "3px solid green" : "none")};
+    background: ${(props) => `url("${props.image}")`};
+    background-size: 100%;
 `
 
 function Tile(props) {
@@ -124,15 +127,17 @@ const StyledTile = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: ${(props) => (props.tile !== null ? "#ccf" : "#f0f0f0")};
+    background-color: #f0f0f0;
     background-image: ${(props) => (props.tile !== null ? `url("${props.image}")` : "none")};
     background-origin: border-box;
     background-size: ${(props) => `${props.numCols * props.width}px ${props.numRows * props.height}px`};
     background-position-x: -${(props) => (props.tile % props.numCols) * props.width}px;
     background-position-y: -${(props) => Math.floor(props.tile / props.numCols) * props.height}px;
+    border: ${(props) => (props.tile !== null && !props.completed ? "2px solid #f0f0f0" : "none")};
     font-size: 20px;
     font-weight: bold;
     color: #fff;
     text-shadow: 0 0 2px #000;
     cursor: ${(props) => (props.tile !== null ? "pointer" : "default")};
+    opacity: ${(props) => (props.completed ? 0 : 1)};
 `
