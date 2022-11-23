@@ -51,7 +51,7 @@ function Board() {
 function initBoard(rows, cols) {
     const board = new Array(rows)
         .fill(null)
-        .map((_, row) => new Array(cols).fill(null).map((_, col) => 1 + row * cols + col))
+        .map((_, row) => new Array(cols).fill(null).map((_, col) => row * cols + col))
     board[rows - 1][cols - 1] = null
     return board
 }
@@ -82,7 +82,7 @@ function isComplete(board) {
             if (row === board.length - 1 && col === board[row].length - 1) {
                 continue
             }
-            if (board[row][col] !== 1 + row * board[row].length + col) {
+            if (board[row][col] !== row * board[row].length + col) {
                 return false
             }
         }
@@ -114,7 +114,7 @@ const StyledTile = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: ${(props) => (props.tile ? "#ccf" : "#f0f0f0")};
+    background-color: ${(props) => (props.tile !== null ? "#ccf" : "#f0f0f0")};
     border: 1px solid #000;
-    cursor: ${(props) => (props.tile ? "pointer" : "default")};
+    cursor: ${(props) => (props.tile !== null ? "pointer" : "default")};
 `
