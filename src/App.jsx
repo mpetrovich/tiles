@@ -17,15 +17,15 @@ export default function App() {
                 <meta name="viewport" content={`width=${viewportWidth}`} />
             </Helmet>
             <div className="buttons">
-                <Button type="button" selected={rowCount === 4} onClick={() => setRowCount(4)}>
+                <ToggleButton selected={rowCount === 4} onClick={() => setRowCount(4)}>
                     Easy
-                </Button>
-                <Button type="button" selected={rowCount === 5} onClick={() => setRowCount(5)}>
+                </ToggleButton>
+                <ToggleButton selected={rowCount === 5} onClick={() => setRowCount(5)}>
                     Medium
-                </Button>
-                <Button type="button" selected={rowCount === 6} onClick={() => setRowCount(6)}>
+                </ToggleButton>
+                <ToggleButton selected={rowCount === 6} onClick={() => setRowCount(6)}>
                     Hard
-                </Button>
+                </ToggleButton>
             </div>
             <Board rowCount={rowCount} tileSize={tileSize} image={image} />
         </StyledApp>
@@ -38,19 +38,25 @@ const StyledApp = styled.div`
     .buttons {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 10px;
+        margin-bottom: 5px;
+
+        > * {
+            flex: 1;
+        }
     }
 `
 
-const Button = styled.button`
+const ToggleButton = styled.button`
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
     min-width: 10ch;
-    height: 30px;
-    font-size: 16px;
+    height: 5rem;
+    font-size: 2rem;
+    background: ${(props) => (props.selected ? "#333" : "#f0f0f0")};
+    color: ${(props) => (props.selected ? "#fff" : "#333")};
+    border: 1px solid ${(props) => (props.selected ? "#333" : "#ccc")};
     cursor: pointer;
 `
 
@@ -227,7 +233,7 @@ const StyledTile = styled.div`
     background-position-x: -${(props) => (props.tile % props.colCount) * props.width}px;
     background-position-y: -${(props) => Math.floor(props.tile / props.colCount) * props.height}px;
     border: ${(props) => (props.tile !== null && !props.completed ? "1px solid #fff" : "none")};
-    font-size: 20px;
+    font-size: 2rem;
     font-weight: bold;
     color: #fff;
     text-shadow: 0 0 2px #000;
