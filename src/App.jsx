@@ -37,7 +37,7 @@ export default function App() {
                     Only sliding
                 </ToggleButton>
             </div>
-            <div className="buttons">
+            <div className="buttons" style={{ fontSize: "3em" }}>
                 <ToggleButton selected={rowCount === 3} onClick={() => setRowCount(3)}>
                     😃
                 </ToggleButton>
@@ -52,7 +52,7 @@ export default function App() {
                 </ToggleButton>
             </div>
             <Board rowCount={rowCount} tileSize={tileSize} image={image} peeking={peeking} swapping={swapping} />
-            <div className="buttons">
+            <div className="buttons" style={{ fontSize: "3em" }}>
                 <ToggleButton
                     style={{ minWidth: "200px" }}
                     selected={peeking}
@@ -81,10 +81,11 @@ const StyledApp = styled.div`
     }
 
     .buttons {
-        margin: 20px 10px;
+        width: 100%;
+        overflow: hidden;
+        margin: 20px 0;
         display: flex;
         align-items: center;
-        line-height: 0;
 
         > * {
             flex: 1;
@@ -98,7 +99,7 @@ const ToggleButton = styled.button`
     align-items: center;
     justify-content: center;
     height: 6rem;
-    font-size: 3rem;
+    font-size: inherit;
     background: ${(props) => (props.selected ? "#333" : "#f0f0f0")};
     color: ${(props) => (props.selected ? "#fff" : "#000")};
     border: 1px solid ${(props) => (props.selected ? "#333" : "#ccc")};
