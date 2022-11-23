@@ -11,23 +11,40 @@ export default function App() {
     const tileSize = viewportWidth / rowCount
     const image = "https://source.unsplash.com/random/800x800"
 
+    const [peeking, setPeeking] = useState(false)
+    const peek = () => setPeeking(true)
+    const unpeek = () => setPeeking(false)
+
     return (
         <StyledApp rowCount={rowCount} tileSize={tileSize}>
             <Helmet>
                 <meta name="viewport" content={`width=${viewportWidth}`} />
             </Helmet>
-            <div className="buttons">
+            <div className="difficulty">
                 <ToggleButton selected={rowCount === 4} onClick={() => setRowCount(4)}>
-                    Easy
+                    😃
                 </ToggleButton>
                 <ToggleButton selected={rowCount === 5} onClick={() => setRowCount(5)}>
-                    Medium
+                    🤨
                 </ToggleButton>
                 <ToggleButton selected={rowCount === 6} onClick={() => setRowCount(6)}>
-                    Hard
+                    🤯
                 </ToggleButton>
             </div>
-            <Board rowCount={rowCount} tileSize={tileSize} image={image} />
+            <Board rowCount={rowCount} tileSize={tileSize} image={image} peeking={peeking} />
+            <div className="actions">
+                <ToggleButton
+                    selected={peeking}
+                    onTouchStart={peek}
+                    onTouchEnd={unpeek}
+                    onMouseDown={peek}
+                    onMouseUp={unpeek}
+                    onPointerDown={peek}
+                    onPointerUp={unpeek}
+                >
+                    🫣
+                </ToggleButton>
+            </div>
         </StyledApp>
     )
 }
@@ -35,14 +52,18 @@ export default function App() {
 const StyledApp = styled.div`
     width: ${(props) => props.rowCount * props.tileSize}px;
 
-    .buttons {
+    .difficulty {
         display: flex;
         align-items: center;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
 
         > * {
             flex: 1;
         }
+    }
+
+    .actions {
+        margin-top: 10px;
     }
 `
 
@@ -60,7 +81,7 @@ const ToggleButton = styled.button`
     cursor: pointer;
 `
 
-function Board({ rowCount, tileSize, image }) {
+function Board({ rowCount, tileSize, image, peeking }) {
     const colCount = rowCount
     const createBoard = useCallback(
         () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5)),
@@ -80,7 +101,7 @@ function Board({ rowCount, tileSize, image }) {
     return (
         <StyledBoard
             image={image}
-            completed={completed}
+            peeking={completed || peeking}
             style={{ width: colCount * tileSize, height: rowCount * tileSize }}
         >
             {board.map((cols, row) =>
@@ -210,10 +231,14 @@ const StyledBoard = styled.div`
     position: relative;
     background: ${(props) => `url("${props.image}")`};
     background-size: 100%;
+
+    > * {
+        display: ${(props) => (props.peeking ? "none !important" : "")};
+    }
 `
 
 function Tile(props) {
-    return <StyledTile {...props}>{props.tile}</StyledTile>
+    return <StyledTile {...props}>{props.tile !== null ? props.tile + 1 : ""}</StyledTile>
 }
 
 const StyledTile = styled.div`
