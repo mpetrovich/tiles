@@ -67,6 +67,12 @@ export default function App() {
                 </ToggleButton>
                 <ToggleButton onClick={changeImage}>🔄 🖼️</ToggleButton>
             </div>
+            <div className="imageCredit">
+                Image from{" "}
+                <a href={image} target="blank">
+                    Unsplash
+                </a>
+            </div>
         </StyledApp>
     )
 }
