@@ -24,7 +24,7 @@ const StyledApp = styled.div`
 `
 
 function Board({ rows, cols }) {
-    const [board, setBoard] = useState(() => initBoard(rows, cols))
+    const [board, setBoard] = useState(() => createBoard(rows, cols))
     const [image, setImage] = useState(zebra)
     const tileWidth = 100
     const tileHeight = 100
@@ -52,8 +52,8 @@ function Board({ rows, cols }) {
                         width={tileWidth}
                         height={tileHeight}
                         image={image}
-                        numRows={board.length}
-                        numCols={board[0].length}
+                        rowCount={board.length}
+                        colCount={board[0].length}
                         completed={completed}
                         key={col}
                         onClick={() => moveTile(row, col)}
@@ -64,11 +64,11 @@ function Board({ rows, cols }) {
     )
 }
 
-function initBoard(rows, cols) {
-    const board = new Array(rows)
+function createBoard(rowCount, colCount) {
+    const board = new Array(rowCount)
         .fill(null)
-        .map((_, row) => new Array(cols).fill(null).map((_, col) => row * cols + col))
-    board[rows - 1][cols - 1] = null
+        .map((_, row) => new Array(colCount).fill(null).map((_, col) => row * colCount + col))
+    board[rowCount - 1][colCount - 1] = null
     return board
 }
 
@@ -130,9 +130,9 @@ const StyledTile = styled.div`
     background-color: #f0f0f0;
     background-image: ${(props) => (props.tile !== null ? `url("${props.image}")` : "none")};
     background-origin: border-box;
-    background-size: ${(props) => `${props.numCols * props.width}px ${props.numRows * props.height}px`};
-    background-position-x: -${(props) => (props.tile % props.numCols) * props.width}px;
-    background-position-y: -${(props) => Math.floor(props.tile / props.numCols) * props.height}px;
+    background-size: ${(props) => `${props.colCount * props.width}px ${props.rowCount * props.height}px`};
+    background-position-x: -${(props) => (props.tile % props.colCount) * props.width}px;
+    background-position-y: -${(props) => Math.floor(props.tile / props.colCount) * props.height}px;
     border: ${(props) => (props.tile !== null && !props.completed ? "2px solid #f0f0f0" : "none")};
     font-size: 20px;
     font-weight: bold;
