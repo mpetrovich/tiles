@@ -5,8 +5,8 @@ import initReactFastclick from "react-fastclick"
 initReactFastclick()
 
 export default function App() {
-    const tileSize = 100
     const [rowCount, setRowCount] = useState(4)
+    const [tileSize] = useState(150)
     const image = "https://source.unsplash.com/random/800x800"
     return (
         <StyledApp rowCount={rowCount} tileSize={tileSize}>
