@@ -29,11 +29,11 @@ export default function App() {
             <Helmet>
                 <meta name="viewport" content={`width=${viewportWidth}`} />
             </Helmet>
-            <div className="buttons">
-                <ToggleButton selected={swapping} onClick={allowSwapping} style={{ fontSize: "2em" }}>
+            <div className="buttons" style={{ fontSize: "2em" }}>
+                <ToggleButton selected={swapping} onClick={allowSwapping}>
                     Allow swapping
                 </ToggleButton>
-                <ToggleButton selected={!swapping} onClick={disallowSwapping} style={{ fontSize: "2em" }}>
+                <ToggleButton selected={!swapping} onClick={disallowSwapping}>
                     Only sliding
                 </ToggleButton>
             </div>
@@ -84,6 +84,7 @@ const StyledApp = styled.div`
         margin: 20px 10px;
         display: flex;
         align-items: center;
+        line-height: 0;
 
         > * {
             flex: 1;
