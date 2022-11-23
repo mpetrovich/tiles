@@ -1,15 +1,21 @@
 import { useEffect, useCallback, useState } from "react"
 import styled from "styled-components"
-
+import { Helmet } from "react-helmet"
 import initReactFastclick from "react-fastclick"
+
 initReactFastclick()
 
 export default function App() {
     const [rowCount, setRowCount] = useState(4)
-    const [tileSize] = useState(150)
+    const viewportWidth = 600
+    const tileSize = viewportWidth / rowCount
     const image = "https://source.unsplash.com/random/800x800"
+
     return (
         <StyledApp rowCount={rowCount} tileSize={tileSize}>
+            <Helmet>
+                <meta name="viewport" content={`width=${viewportWidth}`} />
+            </Helmet>
             <div className="buttons">
                 <Button type="button" selected={rowCount === 4} onClick={() => setRowCount(4)}>
                     Easy
