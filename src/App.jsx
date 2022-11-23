@@ -1,12 +1,12 @@
 import { useState } from "react"
 import styled from "styled-components"
 
-import zebra from "./images/frida-lannerstrom-c_cPNXlovvY-unsplash.jpg"
-
 export default function App() {
+    const size = 4
+    const image = "https://source.unsplash.com/random/800x800"
     return (
         <StyledApp>
-            <Board size={4} image={zebra} />
+            <Board size={size} image={image} />
         </StyledApp>
     )
 }
