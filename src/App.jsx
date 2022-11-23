@@ -267,7 +267,7 @@ const StyledBoard = styled.div`
 `
 
 function Tile(props) {
-    return <StyledTile {...props}>{props.tile !== null ? props.tile + 1 : ""}</StyledTile>
+    return <StyledTile {...props} />
 }
 
 const StyledTile = styled.div`
