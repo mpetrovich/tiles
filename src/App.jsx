@@ -6,24 +6,17 @@ import zebra from "./images/frida-lannerstrom-c_cPNXlovvY-unsplash.jpg"
 export default function App() {
     return (
         <StyledApp>
-            <Board rows={2} cols={2} />
-            <Board rows={3} cols={3} />
-            <Board rows={4} cols={4} />
+            <Board size={4} image={zebra} />
         </StyledApp>
     )
 }
 
-const StyledApp = styled.div`
-    padding: 10px;
+const StyledApp = styled.div``
 
-    > * {
-        margin: 20px;
-    }
-`
-
-function Board({ rows, cols }) {
-    const [board, setBoard] = useState(() => shuffleBoard(createBoard(rows, cols), rows * cols))
-    const [image, setImage] = useState(zebra)
+function Board({ size, image }) {
+    const rows = size
+    const cols = size
+    const [board, setBoard] = useState(() => shuffleBoard(createBoard(rows, cols), Math.pow(size, 10)))
     const tileWidth = 100
     const tileHeight = 100
     const completed = isComplete(board)
@@ -182,7 +175,7 @@ const StyledTile = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f0f0f0;
+    background-color: #fff;
     background-image: ${(props) => (props.tile !== null ? `url("${props.image}")` : "none")};
     background-origin: border-box;
     background-size: ${(props) => `${props.colCount * props.width}px ${props.rowCount * props.height}px`};
