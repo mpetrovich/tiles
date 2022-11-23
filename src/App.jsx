@@ -2,16 +2,18 @@ import { useEffect, useCallback, useState } from "react"
 import styled from "styled-components"
 import { Helmet } from "react-helmet"
 import initReactFastclick from "react-fastclick"
+import ReactCanvasConfetti from "react-canvas-confetti"
 
 initReactFastclick()
 
 export default function App() {
     const [rowCount, setRowCount] = useState(4)
     const viewportWidth = 600
+    const imageUrlBase = "https://source.unsplash.com/random/800x800?"
     const tileSize = viewportWidth / rowCount
 
-    const [image, setImage] = useState("https://source.unsplash.com/random/800x800?")
-    const changeImage = () => setImage("https://source.unsplash.com/random/800x800?" + Math.floor(Math.random() * 100))
+    const [image, setImage] = useState(imageUrlBase)
+    const changeImage = () => setImage(imageUrlBase + Math.floor(Math.random() * 100))
 
     const [peeking, setPeeking] = useState(false)
     const peek = () => setPeeking(true)
@@ -114,9 +116,14 @@ function Board({ rowCount, tileSize, image, peeking }) {
         [rowCount, colCount]
     )
     const [board, setBoard] = useState(createBoard)
+    useEffect(() => setBoard(createBoard()), [createBoard])
+
     const completed = isComplete(board)
 
-    useEffect(() => setBoard(createBoard()), [createBoard])
+    const [zIndex, setZIndex] = useState(-1)
+    const showConfetti = () => setZIndex(2)
+    const hideConfetti = () => setZIndex(-1)
+    useEffect(() => (completed ? showConfetti() : hideConfetti()), [completed])
 
     const onClickTile = (fromRow, fromCol) => {
         if (moveTile(board, fromRow, fromCol)) {
@@ -132,22 +139,47 @@ function Board({ rowCount, tileSize, image, peeking }) {
             image={image}
             peeking={completed || peeking}
         >
-            {board.map((cols, row) =>
-                cols.map((tile, col) => (
-                    <Tile
-                        tile={tile}
-                        row={row}
-                        col={col}
-                        width={tileSize}
-                        height={tileSize}
-                        image={image}
-                        rowCount={board.length}
-                        colCount={board[0].length}
-                        key={col}
-                        onClick={() => onClickTile(row, col)}
-                    />
-                ))
-            )}
+            <div className="tiles">
+                {board.map((cols, row) =>
+                    cols.map((tile, col) => (
+                        <Tile
+                            tile={tile}
+                            row={row}
+                            col={col}
+                            width={tileSize}
+                            height={tileSize}
+                            image={image}
+                            rowCount={board.length}
+                            colCount={board[0].length}
+                            key={col}
+                            onClick={() => onClickTile(row, col)}
+                        />
+                    ))
+                )}
+            </div>
+            <ReactCanvasConfetti
+                style={{ zIndex }}
+                fire={completed}
+                onDecay={hideConfetti}
+                angle={90}
+                className="confetti"
+                colors={["#26ccff", "#a25afd", "#ff5e7e", "#88ff5a", "#fcff42", "#ffa62d", "#ff36ff"]}
+                decay={0.8}
+                drift={0}
+                gravity={0.5}
+                origin={{
+                    x: 0.5,
+                    y: 0.5,
+                }}
+                particleCount={500}
+                resize
+                scalar={1}
+                shapes={["circle", "square"]}
+                spread={360}
+                startVelocity={45}
+                ticks={100}
+                useWorker
+            />
         </StyledBoard>
     )
 }
@@ -261,8 +293,16 @@ const StyledBoard = styled.div`
     background: ${(props) => `url("${props.image}")`};
     background-size: 100%;
 
-    > * {
-        display: ${(props) => (props.peeking ? "none !important" : "")};
+    .tiles {
+        display: ${(props) => (props.peeking ? "none" : "")};
+    }
+
+    .confetti {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
     }
 `
 
