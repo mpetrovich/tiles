@@ -85,6 +85,8 @@ const ToggleButton = styled.button`
     color: ${(props) => (props.selected ? "#fff" : "#333")};
     border: 1px solid ${(props) => (props.selected ? "#333" : "#ccc")};
     cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
 
     &:active {
         background: #333;
