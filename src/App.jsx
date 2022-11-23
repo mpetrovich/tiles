@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useCallback, useState } from "react"
 import styled from "styled-components"
 
 import initReactFastclick from "react-fastclick"
@@ -50,11 +50,14 @@ const Button = styled.button`
 
 function Board({ rowCount, tileSize, image }) {
     const colCount = rowCount
-    const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5))
+    const createBoard = useCallback(
+        () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5)),
+        [rowCount, colCount]
+    )
     const [board, setBoard] = useState(createBoard)
     const completed = isComplete(board)
 
-    useEffect(() => setBoard(createBoard()), [rowCount])
+    useEffect(() => setBoard(createBoard()), [createBoard])
 
     const onClickTile = (fromRow, fromCol) => {
         if (moveTile(board, fromRow, fromCol)) {
