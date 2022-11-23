@@ -9,9 +9,10 @@ initReactFastclick()
 
 export default function App() {
     const [rowCount, setRowCount] = useState(4)
-    const viewportWidth = 600
+    const viewportPadding = 20
+    const viewportWidth = 600 + viewportPadding
     const imageUrlBase = "https://source.unsplash.com/random/800x800?"
-    const tileSize = viewportWidth / rowCount
+    const tileSize = (viewportWidth - viewportPadding) / rowCount
 
     const [image, setImage] = useState(imageUrlBase)
     const changeImage = () => setImage(imageUrlBase + Math.floor(Math.random() * 100))
@@ -93,8 +94,26 @@ const StyledApp = styled.div`
         display: flex;
         align-items: center;
 
+        &:first-child {
+            margin-top: 0;
+        }
+
         > * {
             flex: 1;
+        }
+    }
+
+    .imageCredit {
+        padding: 15px 0;
+        text-align: center;
+        color: #666;
+
+        a,
+        a:link,
+        a:hover,
+        a:active,
+        a:visited {
+            color: #666;
         }
     }
 `
