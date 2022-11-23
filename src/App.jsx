@@ -1,28 +1,60 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import styled from "styled-components"
 
 import initReactFastclick from "react-fastclick"
 initReactFastclick()
 
 export default function App() {
-    const size = 4
+    const tileSize = 100
+    const [rowCount, setRowCount] = useState(4)
     const image = "https://source.unsplash.com/random/800x800"
     return (
-        <StyledApp>
-            <Board size={size} image={image} />
+        <StyledApp rowCount={rowCount} tileSize={tileSize}>
+            <div className="buttons">
+                <Button type="button" selected={rowCount === 4} onClick={() => setRowCount(4)}>
+                    Easy
+                </Button>
+                <Button type="button" selected={rowCount === 5} onClick={() => setRowCount(5)}>
+                    Medium
+                </Button>
+                <Button type="button" selected={rowCount === 6} onClick={() => setRowCount(6)}>
+                    Hard
+                </Button>
+            </div>
+            <Board rowCount={rowCount} tileSize={tileSize} image={image} />
         </StyledApp>
     )
 }
 
-const StyledApp = styled.div``
+const StyledApp = styled.div`
+    width: ${(props) => props.rowCount * props.tileSize}px;
 
-function Board({ size, image }) {
-    const rows = size
-    const cols = size
-    const [board, setBoard] = useState(() => shuffleBoard(createBoard(rows, cols), Math.pow(size, 10)))
-    const tileWidth = 100
-    const tileHeight = 100
+    .buttons {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+    }
+`
+
+const Button = styled.button`
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 10ch;
+    height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+`
+
+function Board({ rowCount, tileSize, image }) {
+    const colCount = rowCount
+    const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5))
+    const [board, setBoard] = useState(createBoard)
     const completed = isComplete(board)
+
+    useEffect(() => setBoard(createBoard()), [rowCount])
 
     const onClickTile = (fromRow, fromCol) => {
         if (moveTile(board, fromRow, fromCol)) {
@@ -31,15 +63,19 @@ function Board({ size, image }) {
     }
 
     return (
-        <StyledBoard image={image} completed={completed} style={{ width: cols * tileWidth, height: rows * tileHeight }}>
+        <StyledBoard
+            image={image}
+            completed={completed}
+            style={{ width: colCount * tileSize, height: rowCount * tileSize }}
+        >
             {board.map((cols, row) =>
                 cols.map((tile, col) => (
                     <Tile
                         tile={tile}
                         row={row}
                         col={col}
-                        width={tileWidth}
-                        height={tileHeight}
+                        width={tileSize}
+                        height={tileSize}
                         image={image}
                         rowCount={board.length}
                         colCount={board[0].length}
@@ -53,7 +89,7 @@ function Board({ size, image }) {
     )
 }
 
-function createBoard(rowCount, colCount) {
+function newBoard(rowCount, colCount) {
     const board = new Array(rowCount)
         .fill(null)
         .map((_, row) => new Array(colCount).fill(null).map((_, col) => row * colCount + col))
@@ -181,7 +217,7 @@ const StyledTile = styled.div`
     background-size: ${(props) => `${props.colCount * props.width}px ${props.rowCount * props.height}px`};
     background-position-x: -${(props) => (props.tile % props.colCount) * props.width}px;
     background-position-y: -${(props) => Math.floor(props.tile / props.colCount) * props.height}px;
-    border: ${(props) => (props.tile !== null && !props.completed ? "2px solid #f0f0f0" : "none")};
+    border: ${(props) => (props.tile !== null && !props.completed ? "1px solid #fff" : "none")};
     font-size: 20px;
     font-weight: bold;
     color: #fff;
