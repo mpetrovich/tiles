@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { Helmet } from "react-helmet"
 import initReactFastclick from "react-fastclick"
 import ReactCanvasConfetti from "react-canvas-confetti"
+import useLocalStorageState from "use-local-storage-state"
 
 initReactFastclick()
 
@@ -25,7 +26,7 @@ export default function App() {
                 <meta name="viewport" content={`width=${viewportWidth}`} />
             </Helmet>
             <div className="buttons">
-                <ToggleButton selected={rowCount === 3} onClick={() => setRowCount(3)}>
+                <ToggleButton selected={rowCount === 2} onClick={() => setRowCount(2)}>
                     😃
                 </ToggleButton>
                 <ToggleButton selected={rowCount === 4} onClick={() => setRowCount(4)}>
@@ -35,7 +36,7 @@ export default function App() {
                     😰
                 </ToggleButton>
                 <ToggleButton selected={rowCount === 6} onClick={() => setRowCount(6)}>
-                    🤯
+                    😱
                 </ToggleButton>
             </div>
             <Board rowCount={rowCount} tileSize={tileSize} image={image} peeking={peeking} />
@@ -60,6 +61,7 @@ export default function App() {
 
 const StyledApp = styled.div`
     box-sizing: border-box;
+    margin: 0 auto;
     width: ${(props) => props.rowCount * props.tileSize}px;
 
     > * {
@@ -81,10 +83,10 @@ const ToggleButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 5rem;
+    height: 6rem;
     font-size: 2rem;
     background: ${(props) => (props.selected ? "#333" : "#f0f0f0")};
-    color: ${(props) => (props.selected ? "#fff" : "#333")};
+    color: ${(props) => (props.selected ? "#fff" : "#000")};
     border: 1px solid ${(props) => (props.selected ? "#333" : "#ccc")};
     cursor: pointer;
     user-select: none;
@@ -100,23 +102,20 @@ const ToggleButton = styled.button`
     }
 
     &:first-of-type {
-        border-top-left-radius: 1rem;
-        border-bottom-left-radius: 1rem;
+        border-top-left-radius: 0.5em;
+        border-bottom-left-radius: 0.5em;
     }
     &:last-of-type {
-        border-top-right-radius: 1rem;
-        border-bottom-right-radius: 1rem;
+        border-top-right-radius: 0.5em;
+        border-bottom-right-radius: 0.5em;
     }
 `
 
 function Board({ rowCount, tileSize, image, peeking }) {
     const colCount = rowCount
-    const createBoard = useCallback(
-        () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5)),
-        [rowCount, colCount]
-    )
+    const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), 1 /* Math.pow(rowCount, 0) */)
     const [board, setBoard] = useState(createBoard)
-    useEffect(() => setBoard(createBoard()), [createBoard])
+    useEffect(() => setBoard(createBoard()), [rowCount, colCount])
 
     const completed = isComplete(board)
 
@@ -125,9 +124,32 @@ function Board({ rowCount, tileSize, image, peeking }) {
     const hideConfetti = () => setZIndex(-1)
     useEffect(() => (completed ? showConfetti() : hideConfetti()), [completed])
 
+    const [statsVisible, setStatsVisible] = useState(false)
+    const showStats = () => setStatsVisible(true)
+    const hideStats = () => setStatsVisible(false)
+
+    const [moveCount, setMoveCount] = useState(0)
+    const [bestMoveCount, setBestMoveCount] = useLocalStorageState(`best.${rowCount}`, { defaultValue: null })
+    const [previousBestMoveCount, setPreviousBestMoveCount] = useState(bestMoveCount)
+
+    const onConfettiCompletion = () => {
+        hideConfetti()
+        showStats()
+        setPreviousBestMoveCount(bestMoveCount)
+        setBestMoveCount(Math.min(moveCount, bestMoveCount || Infinity))
+    }
+
+    const onHideStats = () => {
+        hideStats()
+        setMoveCount(0)
+        setPreviousBestMoveCount(bestMoveCount)
+        setBoard(createBoard())
+    }
+
     const onClickTile = (fromRow, fromCol) => {
         if (moveTile(board, fromRow, fromCol)) {
             setBoard(board.slice())
+            setMoveCount(moveCount + 1)
         }
     }
 
@@ -158,28 +180,39 @@ function Board({ rowCount, tileSize, image, peeking }) {
                 )}
             </div>
             <ReactCanvasConfetti
+                className="confetti"
                 style={{ zIndex }}
                 fire={completed}
-                onDecay={hideConfetti}
-                angle={90}
-                className="confetti"
+                onDecay={onConfettiCompletion}
                 colors={["#26ccff", "#a25afd", "#ff5e7e", "#88ff5a", "#fcff42", "#ffa62d", "#ff36ff"]}
                 decay={0.8}
                 drift={0}
-                gravity={0.5}
+                gravity={1}
                 origin={{
                     x: 0.5,
-                    y: 0.5,
+                    y: 0.25,
                 }}
                 particleCount={500}
                 resize
                 scalar={1}
                 shapes={["circle", "square"]}
+                angle={90}
                 spread={360}
-                startVelocity={45}
-                ticks={100}
+                startVelocity={50}
+                ticks={200}
                 useWorker
             />
+            {statsVisible && (
+                <div className="stats">
+                    <div style={{ fontSize: "6rem" }}>🥳</div>
+                    <div style={{ textAlign: "right" }}>
+                        Moves taken: <code>{moveCount}</code>
+                        <br />
+                        Previous best: <code>{previousBestMoveCount}</code>
+                    </div>
+                    <Button onClick={onHideStats}>Try again</Button>
+                </div>
+            )}
         </StyledBoard>
     )
 }
@@ -303,6 +336,48 @@ const StyledBoard = styled.div`
         top: 0;
         width: 100%;
         height: 100%;
+    }
+
+    .stats {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px 0;
+        justify-content: space-evenly;
+        font-size: 3rem;
+        background: rgb(255 255 255 / 90%);
+        backdrop-filter: blur(5px);
+
+        code {
+            display: inline-block;
+            min-width: 2ch;
+        }
+    }
+`
+
+const Button = styled.button`
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6em 1em;
+    font-size: inherit;
+    background: #208cff;
+    color: #fff;
+    border: 1px solid ${(props) => (props.selected ? "#333" : "#ccc")};
+    border-radius: 0.5em;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+
+    &:active {
+        background: #333;
+        border-color: #333;
     }
 `
 
