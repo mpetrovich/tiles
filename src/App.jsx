@@ -21,8 +21,6 @@ function Board({ size, image }) {
     const tileHeight = 100
     const completed = isComplete(board)
 
-    console.log("Board", board)
-
     const onClickTile = (fromRow, fromCol) => {
         if (moveTile(board, fromRow, fromCol)) {
             setBoard(board.slice())
