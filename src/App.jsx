@@ -30,7 +30,7 @@ function Board() {
     }
 
     return (
-        <StyledBoard style={{ width: cols * tileWidth, height: rows * tileHeight }}>
+        <StyledBoard complete={isComplete(board)} style={{ width: cols * tileWidth, height: rows * tileHeight }}>
             {board.map((cols, row) =>
                 cols.map((tile, col) => (
                     <Tile
@@ -76,9 +76,24 @@ function isSpaceFree(board, row, col) {
     return 0 <= row && row < board.length && 0 <= col && col < board[0].length && board[row][col] === null
 }
 
+function isComplete(board) {
+    for (let row = 0; row < board.length; row++) {
+        for (let col = 0; col < board[row].length; col++) {
+            if (row === board.length - 1 && col === board[row].length - 1) {
+                continue
+            }
+            if (board[row][col] !== 1 + row * board[row].length + col) {
+                return false
+            }
+        }
+    }
+    return true
+}
+
 const StyledBoard = styled.div`
     position: relative;
     user-select: none;
+    outline: ${(props) => (props.complete ? "3px solid green" : "none")};
 `
 
 function Tile({ tile, row, col, width, height, ...props }) {
