@@ -20,13 +20,25 @@ export default function App() {
     const peek = () => setPeeking(true)
     const unpeek = () => setPeeking(false)
 
+    const [swapping, setSwapping] = useState(true)
+    const allowSwapping = () => setSwapping(true)
+    const disallowSwapping = () => setSwapping(false)
+
     return (
         <StyledApp rowCount={rowCount} tileSize={tileSize}>
             <Helmet>
                 <meta name="viewport" content={`width=${viewportWidth}`} />
             </Helmet>
+            <div className="buttons" style={{ fontSize: "2em" }}>
+                <ToggleButton selected={swapping} onClick={allowSwapping}>
+                    Allow swapping
+                </ToggleButton>
+                <ToggleButton selected={!swapping} onClick={disallowSwapping}>
+                    Only sliding
+                </ToggleButton>
+            </div>
             <div className="buttons">
-                <ToggleButton selected={rowCount === 2} onClick={() => setRowCount(2)}>
+                <ToggleButton selected={rowCount === 3} onClick={() => setRowCount(3)}>
                     😃
                 </ToggleButton>
                 <ToggleButton selected={rowCount === 4} onClick={() => setRowCount(4)}>
@@ -39,7 +51,7 @@ export default function App() {
                     😱
                 </ToggleButton>
             </div>
-            <Board rowCount={rowCount} tileSize={tileSize} image={image} peeking={peeking} />
+            <Board rowCount={rowCount} tileSize={tileSize} image={image} peeking={peeking} swapping={swapping} />
             <div className="buttons">
                 <ToggleButton
                     style={{ minWidth: "200px" }}
@@ -72,6 +84,8 @@ const StyledApp = styled.div`
         margin: 20px 10px;
         display: flex;
         align-items: center;
+        font-size: 3rem;
+
         > * {
             flex: 1;
         }
@@ -84,7 +98,7 @@ const ToggleButton = styled.button`
     align-items: center;
     justify-content: center;
     height: 6rem;
-    font-size: 3rem;
+    font-size: inherit;
     background: ${(props) => (props.selected ? "#333" : "#f0f0f0")};
     color: ${(props) => (props.selected ? "#fff" : "#000")};
     border: 1px solid ${(props) => (props.selected ? "#333" : "#ccc")};
@@ -111,7 +125,7 @@ const ToggleButton = styled.button`
     }
 `
 
-function Board({ rowCount, tileSize, image, peeking }) {
+function Board({ rowCount, tileSize, image, peeking, swapping }) {
     const colCount = rowCount
     const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5))
     const [board, setBoard] = useState(createBoard)
@@ -131,7 +145,9 @@ function Board({ rowCount, tileSize, image, peeking }) {
     const hideStats = () => setStatsVisible(false)
 
     const [moveCount, setMoveCount] = useState(0)
-    const [bestMoveCount, setBestMoveCount] = useLocalStorageState(`best.${rowCount}`, { defaultValue: null })
+    const [bestMoveCount, setBestMoveCount] = useLocalStorageState(`best.${swapping ? "swap" : "slide"}.${rowCount}`, {
+        defaultValue: null,
+    })
     const [previousBestMoveCount, setPreviousBestMoveCount] = useState(bestMoveCount)
 
     const onConfettiCompletion = () => {
@@ -149,7 +165,7 @@ function Board({ rowCount, tileSize, image, peeking }) {
     }
 
     const onClickTile = (fromRow, fromCol) => {
-        if (moveTile(board, fromRow, fromCol)) {
+        if (moveTile(board, fromRow, fromCol, swapping)) {
             setBoard(board.slice())
             setMoveCount(moveCount + 1)
         }
@@ -273,9 +289,16 @@ function shuffleArray(array) {
     return array
 }
 
-function moveTile(board, fromRow, fromCol) {
+function moveTile(board, fromRow, fromCol, swapping) {
     if (fromRow < 0 || fromRow >= board.length || fromCol < 0 || fromCol >= board.length) {
         return false
+    }
+
+    if (swapping) {
+        const [toRow, toCol] = findEmptySpace(board)
+        board[toRow][toCol] = board[fromRow][fromCol]
+        board[fromRow][fromCol] = null
+        return true
     }
 
     const [toRow, toCol] = findAdjacentSpace(board, fromRow, fromCol)
