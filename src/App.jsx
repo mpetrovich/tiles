@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react"
+import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { Helmet } from "react-helmet"
 import initReactFastclick from "react-fastclick"
@@ -113,8 +113,10 @@ const ToggleButton = styled.button`
 
 function Board({ rowCount, tileSize, image, peeking }) {
     const colCount = rowCount
-    const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), 1 /* Math.pow(rowCount, 0) */)
+    const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5))
     const [board, setBoard] = useState(createBoard)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => setBoard(createBoard()), [rowCount, colCount])
 
     const completed = isComplete(board)
