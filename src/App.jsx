@@ -1,20 +1,31 @@
 import { useState } from "react"
 import styled from "styled-components"
 
+import zebra from "./images/frida-lannerstrom-c_cPNXlovvY-unsplash.jpg"
+
 export default function App() {
     return (
         <StyledApp>
-            <Board />
+            <Board rows={2} cols={2} />
+            <Board rows={3} cols={3} />
+            <Board rows={4} cols={4} />
+            <Board rows={6} cols={4} />
+            <Board rows={4} cols={6} />
         </StyledApp>
     )
 }
 
-const StyledApp = styled.div``
+const StyledApp = styled.div`
+    padding: 10px;
 
-function Board() {
-    const rows = 4
-    const cols = 4
+    > * {
+        margin: 20px;
+    }
+`
+
+function Board({ rows, cols }) {
     const [board, setBoard] = useState(() => initBoard(rows, cols))
+    const [image, setImage] = useState(zebra)
     const tileWidth = 100
     const tileHeight = 100
 
@@ -39,6 +50,9 @@ function Board() {
                         col={col}
                         width={tileWidth}
                         height={tileHeight}
+                        image={image}
+                        numRows={board.length}
+                        numCols={board[0].length}
                         key={col}
                         onClick={() => moveTile(row, col)}
                     />
@@ -96,12 +110,8 @@ const StyledBoard = styled.div`
     outline: ${(props) => (props.complete ? "3px solid green" : "none")};
 `
 
-function Tile({ tile, row, col, width, height, ...props }) {
-    return (
-        <StyledTile tile={tile} row={row} col={col} width={width} height={height} {...props}>
-            {tile}
-        </StyledTile>
-    )
+function Tile(props) {
+    return <StyledTile {...props}>{props.tile}</StyledTile>
 }
 
 const StyledTile = styled.div`
@@ -115,6 +125,14 @@ const StyledTile = styled.div`
     align-items: center;
     justify-content: center;
     background-color: ${(props) => (props.tile !== null ? "#ccf" : "#f0f0f0")};
-    border: 1px solid #000;
+    background-image: ${(props) => (props.tile !== null ? `url("${props.image}")` : "none")};
+    background-origin: border-box;
+    background-size: ${(props) => `${props.numCols * props.width}px ${props.numRows * props.height}px`};
+    background-position-x: -${(props) => (props.tile % props.numCols) * props.width}px;
+    background-position-y: -${(props) => Math.floor(props.tile / props.numCols) * props.height}px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 2px #000;
     cursor: ${(props) => (props.tile !== null ? "pointer" : "default")};
 `
