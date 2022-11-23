@@ -9,8 +9,6 @@ export default function App() {
             <Board rows={2} cols={2} />
             <Board rows={3} cols={3} />
             <Board rows={4} cols={4} />
-            <Board rows={6} cols={4} />
-            <Board rows={4} cols={6} />
         </StyledApp>
     )
 }
@@ -24,19 +22,16 @@ const StyledApp = styled.div`
 `
 
 function Board({ rows, cols }) {
-    const [board, setBoard] = useState(() => createBoard(rows, cols))
+    const [board, setBoard] = useState(() => shuffleBoard(createBoard(rows, cols), rows * cols))
     const [image, setImage] = useState(zebra)
     const tileWidth = 100
     const tileHeight = 100
     const completed = isComplete(board)
 
-    console.log(board)
+    console.log("Board", board)
 
-    const moveTile = (fromRow, fromCol) => {
-        const [toRow, toCol] = findAdjacentSpace(board, fromRow, fromCol)
-        if (toRow !== null) {
-            board[toRow][toCol] = board[fromRow][fromCol]
-            board[fromRow][fromCol] = null
+    const onClickTile = (fromRow, fromCol) => {
+        if (moveTile(board, fromRow, fromCol)) {
             setBoard(board.slice())
         }
     }
@@ -56,7 +51,7 @@ function Board({ rows, cols }) {
                         colCount={board[0].length}
                         completed={completed}
                         key={col}
-                        onClick={() => moveTile(row, col)}
+                        onClick={() => onClickTile(row, col)}
                     />
                 ))
             )}
@@ -70,6 +65,66 @@ function createBoard(rowCount, colCount) {
         .map((_, row) => new Array(colCount).fill(null).map((_, col) => row * colCount + col))
     board[rowCount - 1][colCount - 1] = null
     return board
+}
+
+function shuffleBoard(board, steps) {
+    let prev = []
+    while (steps-- > 0) {
+        let [row, col] = findEmptySpace(board)
+        const destinations = shuffleArray([
+            [row - 1, col],
+            [row + 1, col],
+            [row, col - 1],
+            [row, col + 1],
+        ])
+        for (let [fromRow, fromCol] of destinations) {
+            if (fromRow === prev[0]?.[0] && fromCol === prev[0]?.[1]) {
+                // Avoids back-and-forth movement
+                continue
+            }
+            if (moveTile(board, fromRow, fromCol)) {
+                prev.push([fromRow, fromCol])
+                if (prev.length > 2) {
+                    prev.shift()
+                }
+                break
+            }
+        }
+    }
+    return board.slice()
+}
+
+function findEmptySpace(board) {
+    for (let row = 0; row < board.length; row++) {
+        for (let col = 0; col < board[row].length; col++) {
+            if (board[row][col] === null) {
+                return [row, col]
+            }
+        }
+    }
+    return [null, null]
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[array[i], array[j]] = [array[j], array[i]]
+    }
+    return array
+}
+
+function moveTile(board, fromRow, fromCol) {
+    if (fromRow < 0 || fromRow >= board.length || fromCol < 0 || fromCol >= board.length) {
+        return false
+    }
+
+    const [toRow, toCol] = findAdjacentSpace(board, fromRow, fromCol)
+    if (toRow !== null && toCol !== null) {
+        board[toRow][toCol] = board[fromRow][fromCol]
+        board[fromRow][fromCol] = null
+        return true
+    }
+    return false
 }
 
 function findAdjacentSpace(board, row, col) {
@@ -89,7 +144,7 @@ function findAdjacentSpace(board, row, col) {
 }
 
 function isSpaceFree(board, row, col) {
-    return 0 <= row && row < board.length && 0 <= col && col < board[0].length && board[row][col] === null
+    return 0 <= row && row < board.length && 0 <= col && col < board[row].length && board[row][col] === null
 }
 
 function isComplete(board) {
