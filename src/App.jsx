@@ -1,6 +1,9 @@
 import { useState } from "react"
 import styled from "styled-components"
 
+import initReactFastclick from "react-fastclick"
+initReactFastclick()
+
 export default function App() {
     const size = 4
     const image = "https://source.unsplash.com/random/800x800"
