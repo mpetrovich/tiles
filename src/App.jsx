@@ -84,7 +84,7 @@ const ToggleButton = styled.button`
     align-items: center;
     justify-content: center;
     height: 6rem;
-    font-size: 2rem;
+    font-size: 3rem;
     background: ${(props) => (props.selected ? "#333" : "#f0f0f0")};
     color: ${(props) => (props.selected ? "#fff" : "#000")};
     border: 1px solid ${(props) => (props.selected ? "#333" : "#ccc")};
