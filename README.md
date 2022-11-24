@@ -1,6 +1,6 @@
 # Tileslide
 
-A simple sliding puzzle game.
+A simple sliding puzzle game. Play it online at [tileslide.com](https://tileslide.com)
 
 <img src="public/screenshot.png" width="300">
 
