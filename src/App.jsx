@@ -11,11 +11,23 @@ export default function App() {
     const [rowCount, setRowCount] = useState(4)
     const viewportPadding = 20
     const viewportWidth = 600 + viewportPadding
-    const imageUrlBase = "https://source.unsplash.com/random/800x800?"
     const tileSize = (viewportWidth - viewportPadding) / rowCount
 
-    const [image, setImage] = useState(imageUrlBase)
-    const changeImage = () => setImage(imageUrlBase + Math.floor(Math.random() * 100))
+    const [image, setImage] = useState("")
+    const [loading, setLoading] = useState(false)
+    const fetchImage = async () => {
+        setLoading(true)
+        const response = await fetch("https://source.unsplash.com/random/800x800")
+        setImage(response.url)
+        setLoading(false)
+    }
+    const changeImage = () => {
+        setImage("")
+        fetchImage()
+    }
+    useEffect(() => {
+        fetchImage()
+    }, [])
 
     const [peeking, setPeeking] = useState(false)
     const peek = () => setPeeking(true)
@@ -52,7 +64,14 @@ export default function App() {
                     😱
                 </ToggleButton>
             </div>
-            <Board rowCount={rowCount} tileSize={tileSize} image={image} peeking={peeking} swapping={swapping} />
+            <Board
+                rowCount={rowCount}
+                tileSize={tileSize}
+                image={image}
+                loading={loading}
+                peeking={peeking}
+                swapping={swapping}
+            />
             <div className="buttons" style={{ fontSize: "3em" }}>
                 <ToggleButton
                     style={{ minWidth: "200px" }}
@@ -131,6 +150,7 @@ const ToggleButton = styled.button`
     cursor: pointer;
     user-select: none;
     touch-action: manipulation;
+    outline: none;
 
     &:active {
         background: #333;
@@ -151,7 +171,7 @@ const ToggleButton = styled.button`
     }
 `
 
-function Board({ rowCount, tileSize, image, peeking, swapping }) {
+function Board({ rowCount, tileSize, image, loading, peeking, swapping }) {
     const colCount = rowCount
     const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5))
     const [board, setBoard] = useState(createBoard)
@@ -205,6 +225,7 @@ function Board({ rowCount, tileSize, image, peeking, swapping }) {
             image={image}
             peeking={completed || peeking}
         >
+            {loading && <div className="loading">Loading…</div>}
             <div className="tiles">
                 {board.map((cols, row) =>
                     cols.map((tile, col) => (
@@ -377,6 +398,22 @@ const StyledBoard = styled.div`
     background: ${(props) => `url("${props.image}")`};
     background-size: 100%;
 
+    .loading {
+        position: absolute;
+        z-index: 2;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #aaa;
+        background: #f0f0f0;
+    }
+
     .tiles {
         display: ${(props) => (props.peeking ? "none" : "")};
     }
@@ -425,6 +462,7 @@ const Button = styled.button`
     cursor: pointer;
     user-select: none;
     touch-action: manipulation;
+    outline: none;
 
     &:active {
         background: #333;
