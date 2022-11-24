@@ -88,8 +88,11 @@ export default function App() {
                 <ToggleButton onClick={changeImage}>🔄 🖼️</ToggleButton>
             </div>
             <div className="imageCredit">
-                Image from{" "}
-                <a href={image} target="blank">
+                <a href={`https://www.google.com/search?tbm=isch&q=${image}`} target="blank">
+                    Image
+                </a>{" "}
+                from{" "}
+                <a href="https://unsplash.com/" target="blank">
                     Unsplash
                 </a>
             </div>
