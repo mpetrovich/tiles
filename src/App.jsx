@@ -1,3 +1,5 @@
+// @todo Split this file into components
+
 import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { Helmet } from "react-helmet"
