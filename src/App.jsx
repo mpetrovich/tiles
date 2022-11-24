@@ -29,6 +29,9 @@ export default function App() {
         fetchImage()
     }, [])
 
+    const [imageQuery, setImageQuery] = useState("")
+    useEffect(() => setImageQuery(encodeURIComponent(`site:unsplash.com ${image.replace(/(\?.*$)/, "")}`)), [image])
+
     const [peeking, setPeeking] = useState(false)
     const peek = () => setPeeking(true)
     const unpeek = () => setPeeking(false)
@@ -88,7 +91,7 @@ export default function App() {
                 <ToggleButton onClick={changeImage}>🔄 🖼️</ToggleButton>
             </div>
             <div className="imageCredit">
-                <a href={`https://www.google.com/search?tbm=isch&q=${image}`} target="blank">
+                <a href={`https://www.google.com/search?tbm=isch&q=${imageQuery}`} target="blank">
                     Image
                 </a>{" "}
                 from{" "}
