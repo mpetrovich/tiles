@@ -50,7 +50,7 @@ export default function App() {
     const allowSwapping = () => setSwapping(true)
     const disallowSwapping = () => setSwapping(false)
 
-    const [darkMode, setDarkMode] = useState(false)
+    const [darkMode, setDarkMode] = useLocalStorageState("darkMode", { defaultValue: false })
     const toggleDarkMode = () => setDarkMode(!darkMode)
     useEffect(() => {
         document.documentElement.classList.toggle("darkMode", darkMode)
