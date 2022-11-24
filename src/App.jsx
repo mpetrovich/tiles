@@ -29,6 +29,16 @@ export default function App() {
         fetchImage()
     }, [])
 
+    const colCount = rowCount
+    const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5))
+    const [board, setBoard] = useState(createBoard)
+    const resetBoard = () => setBoard(createBoard())
+    const refreshBoard = () => setBoard(board.slice())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(resetBoard, [rowCount, colCount, image])
+
+    const completed = isComplete(board)
+
     const [imageQuery, setImageQuery] = useState("")
     useEffect(() => setImageQuery(encodeURIComponent(`site:unsplash.com ${image.replace(/(\?.*$)/, "")}`)), [image])
 
@@ -68,12 +78,17 @@ export default function App() {
                 </ToggleButton>
             </div>
             <Board
+                board={board}
                 rowCount={rowCount}
+                colCount={colCount}
                 tileSize={tileSize}
                 image={image}
                 loading={loading}
                 peeking={peeking}
                 swapping={swapping}
+                completed={completed}
+                onResetBoard={resetBoard}
+                onMoveTile={refreshBoard}
             />
             <div className="buttons" style={{ fontSize: "3em" }}>
                 <ToggleButton
@@ -175,16 +190,19 @@ const ToggleButton = styled.button`
     }
 `
 
-function Board({ rowCount, tileSize, image, loading, peeking, swapping }) {
-    const colCount = rowCount
-    const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5))
-    const [board, setBoard] = useState(createBoard)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => setBoard(createBoard()), [rowCount, colCount])
-
-    const completed = isComplete(board)
-
+function Board({
+    board,
+    rowCount,
+    colCount,
+    tileSize,
+    image,
+    loading,
+    peeking,
+    swapping,
+    completed,
+    onResetBoard,
+    onMoveTile,
+}) {
     const [zIndex, setZIndex] = useState(-1)
     const showConfetti = () => setZIndex(2)
     const hideConfetti = () => setZIndex(-1)
@@ -199,6 +217,7 @@ function Board({ rowCount, tileSize, image, loading, peeking, swapping }) {
         defaultValue: null,
     })
     const [previousBestMoveCount, setPreviousBestMoveCount] = useState(bestMoveCount)
+    useEffect(() => setMoveCount(0), [rowCount, image])
 
     const onConfettiCompletion = () => {
         hideConfetti()
@@ -211,13 +230,13 @@ function Board({ rowCount, tileSize, image, loading, peeking, swapping }) {
         hideStats()
         setMoveCount(0)
         setPreviousBestMoveCount(bestMoveCount)
-        setBoard(createBoard())
+        onResetBoard()
     }
 
     const onClickTile = (fromRow, fromCol) => {
         if (moveTile(board, fromRow, fromCol, swapping)) {
-            setBoard(board.slice())
             setMoveCount(moveCount + 1)
+            onMoveTile()
         }
     }
 
