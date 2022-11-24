@@ -113,8 +113,6 @@ const StyledApp = styled.div`
     }
 
     .buttons {
-        width: 100%;
-        overflow: hidden;
         margin: 20px 0;
         display: flex;
         align-items: center;
@@ -129,7 +127,7 @@ const StyledApp = styled.div`
     }
 
     .imageCredit {
-        padding: 15px 0;
+        padding: 15px 0 5px;
         text-align: center;
         color: #666;
 
