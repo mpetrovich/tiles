@@ -50,6 +50,12 @@ export default function App() {
     const allowSwapping = () => setSwapping(true)
     const disallowSwapping = () => setSwapping(false)
 
+    const [darkMode, setDarkMode] = useState(false)
+    const toggleDarkMode = () => setDarkMode(!darkMode)
+    useEffect(() => {
+        document.documentElement.classList.toggle("darkMode", darkMode)
+    }, [darkMode])
+
     return (
         <StyledApp rowCount={rowCount} tileSize={tileSize}>
             <Helmet>
@@ -65,16 +71,16 @@ export default function App() {
             </div>
             <div className="buttons" style={{ fontSize: "3em" }}>
                 <ToggleButton selected={rowCount === 3} onClick={() => setRowCount(3)}>
-                    😃
+                    <span data-do-not-invert>😃</span>
                 </ToggleButton>
                 <ToggleButton selected={rowCount === 4} onClick={() => setRowCount(4)}>
-                    🤨
+                    <span data-do-not-invert>🤨</span>
                 </ToggleButton>
                 <ToggleButton selected={rowCount === 5} onClick={() => setRowCount(5)}>
-                    😰
+                    <span data-do-not-invert>😰</span>
                 </ToggleButton>
                 <ToggleButton selected={rowCount === 6} onClick={() => setRowCount(6)}>
-                    😱
+                    <span data-do-not-invert>😱</span>
                 </ToggleButton>
             </div>
             <Board
@@ -89,6 +95,7 @@ export default function App() {
                 completed={completed}
                 onResetBoard={resetBoard}
                 onMoveTile={refreshBoard}
+                darkMode={darkMode}
             />
             <div className="buttons" style={{ fontSize: "3em" }}>
                 <ToggleButton
@@ -101,11 +108,16 @@ export default function App() {
                     onPointerDown={peek}
                     onPointerUp={unpeek}
                 >
-                    {peeking ? "😮" : "🫣"}
+                    <span data-do-not-invert>{peeking ? "😮" : "🫣"}</span>
                 </ToggleButton>
-                <ToggleButton onClick={changeImage}>🔄 🖼️</ToggleButton>
+                <ToggleButton onClick={changeImage}>
+                    <span data-do-not-invert>🔄 🖼️</span>
+                </ToggleButton>
             </div>
             <footer>
+                <div className="darkMode" onClick={toggleDarkMode}>
+                    <i className={darkMode ? "icon-sun icon-2x" : "icon-moon icon-2x"} />
+                </div>
                 <div className="imageCredit">
                     Image from{" "}
                     <a href={`https://www.google.com/search?tbm=isch&q=${imageQuery}`} target="blank">
@@ -146,13 +158,16 @@ const StyledApp = styled.div`
     footer {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         padding: 15px 0 5px;
         color: #666;
     }
 
-    .imageCredit {
-        text-align: center;
+    .darkMode {
+        cursor: pointer;
+    }
 
+    .imageCredit {
         a,
         a:link,
         a:hover,
@@ -163,7 +178,6 @@ const StyledApp = styled.div`
     }
 
     .gitHub {
-        margin-left: auto;
         text-decoration: none;
         color: inherit;
     }
@@ -215,6 +229,7 @@ function Board({
     completed,
     onResetBoard,
     onMoveTile,
+    darkMode,
 }) {
     const [zIndex, setZIndex] = useState(-1)
     const showConfetti = () => setZIndex(2)
@@ -260,6 +275,7 @@ function Board({
             tileSize={tileSize}
             image={image}
             peeking={completed || peeking}
+            darkMode={darkMode}
         >
             {loading && <div className="loading">Loading…</div>}
             <div className="tiles">
@@ -275,6 +291,7 @@ function Board({
                             rowCount={board.length}
                             colCount={board[0].length}
                             moveCount={moveCount}
+                            darkMode={darkMode}
                             key={col}
                             onClick={() => onClickTile(row, col)}
                         />
@@ -306,13 +323,17 @@ function Board({
             />
             {statsVisible && (
                 <div className="stats">
-                    <div style={{ fontSize: "6rem" }}>🥳</div>
+                    <div style={{ fontSize: "6rem" }} data-do-not-invert>
+                        🥳
+                    </div>
                     <div style={{ textAlign: "right" }}>
                         Moves made: <code>{moveCount}</code>
                         <br />
                         Previous best: <code>{previousBestMoveCount}</code>
                     </div>
-                    <Button onClick={onHideStats}>Try again</Button>
+                    <Button onClick={onHideStats} data-do-not-invert>
+                        Try again
+                    </Button>
                 </div>
             )}
         </StyledBoard>
@@ -432,8 +453,19 @@ const StyledBoard = styled.div`
     position: relative;
     width: ${(props) => props.colCount * props.tileSize}px;
     height: ${(props) => props.rowCount * props.tileSize}px;
-    background: ${(props) => `url("${props.image}")`};
-    background-size: 100%;
+
+    &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        display: block;
+        background: ${(props) => `url("${props.image}")`};
+        background-size: 100%;
+        filter: ${(props) => (props.darkMode ? "invert(1)" : "none")};
+    }
 
     .loading {
         position: absolute;
@@ -521,16 +553,18 @@ const StyledTile = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
+    background-color: ${(props) => (props.darkMode ? "#000" : "#fff")};
     background-image: ${(props) => (props.tile !== null ? `url("${props.image}")` : "none")};
     background-origin: border-box;
     background-size: ${(props) => `${props.colCount * props.width}px ${props.rowCount * props.height}px`};
     background-position-x: -${(props) => (props.tile % props.colCount) * props.width}px;
     background-position-y: -${(props) => Math.floor(props.tile / props.colCount) * props.height}px;
-    border: 1px solid #fff;
+    border: 1px solid transparent;
+    border-color: ${(props) => (props.darkMode ? "#000" : "#fff")};
     font-size: 2rem;
     font-weight: bold;
     color: #ccc;
     cursor: ${(props) => (props.tile !== null ? "pointer" : "default")};
     user-select: none;
+    filter: ${(props) => (props.darkMode ? "invert(1)" : "none")};
 `
