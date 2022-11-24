@@ -254,7 +254,7 @@ function Board({ rowCount, tileSize, image, loading, peeking, swapping }) {
                 fire={completed}
                 onDecay={onConfettiCompletion}
                 colors={["#26ccff", "#a25afd", "#ff5e7e", "#88ff5a", "#fcff42", "#ffa62d", "#ff36ff"]}
-                decay={0.8}
+                decay={0.85}
                 drift={0}
                 gravity={1}
                 origin={{
@@ -268,7 +268,7 @@ function Board({ rowCount, tileSize, image, loading, peeking, swapping }) {
                 angle={90}
                 spread={360}
                 startVelocity={50}
-                ticks={200}
+                ticks={150}
                 useWorker
             />
             {statsVisible && (
