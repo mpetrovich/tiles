@@ -242,6 +242,7 @@ function Board({ rowCount, tileSize, image, loading, peeking, swapping }) {
                             image={image}
                             rowCount={board.length}
                             colCount={board[0].length}
+                            moveCount={moveCount}
                             key={col}
                             onClick={() => onClickTile(row, col)}
                         />
@@ -475,7 +476,7 @@ const Button = styled.button`
 `
 
 function Tile(props) {
-    return <StyledTile {...props} />
+    return <StyledTile {...props}>{props.tile === null && props.moveCount ? props.moveCount : ""}</StyledTile>
 }
 
 const StyledTile = styled.div`
@@ -497,8 +498,7 @@ const StyledTile = styled.div`
     border: 1px solid #fff;
     font-size: 2rem;
     font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 2px #000;
+    color: #ccc;
     cursor: ${(props) => (props.tile !== null ? "pointer" : "default")};
     user-select: none;
 `
