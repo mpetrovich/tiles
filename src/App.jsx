@@ -276,7 +276,7 @@ function Board({ rowCount, tileSize, image, loading, peeking, swapping }) {
                 <div className="stats">
                     <div style={{ fontSize: "6rem" }}>🥳</div>
                     <div style={{ textAlign: "right" }}>
-                        Moves taken: <code>{moveCount}</code>
+                        Moves made: <code>{moveCount}</code>
                         <br />
                         Previous best: <code>{previousBestMoveCount}</code>
                     </div>
