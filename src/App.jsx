@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet"
 import initReactFastclick from "react-fastclick"
 import ReactCanvasConfetti from "react-canvas-confetti"
 import useLocalStorageState from "use-local-storage-state"
-import gitHubIcon from "./github.png"
 
 initReactFastclick()
 
@@ -114,7 +113,7 @@ export default function App() {
                     </a>
                 </div>
                 <a className="gitHub" href="https://github.com/mpetrovich/tileslide" target="blank">
-                    <img src={gitHubIcon} alt="GitHub repository" width="32" height="32" />
+                    <i className="icon-github icon-2x" />
                 </a>
             </footer>
         </StyledApp>
@@ -148,11 +147,11 @@ const StyledApp = styled.div`
         display: flex;
         align-items: center;
         padding: 15px 0 5px;
+        color: #666;
     }
 
     .imageCredit {
         text-align: center;
-        color: #666;
 
         a,
         a:link,
@@ -165,6 +164,8 @@ const StyledApp = styled.div`
 
     .gitHub {
         margin-left: auto;
+        text-decoration: none;
+        color: inherit;
     }
 `
 
