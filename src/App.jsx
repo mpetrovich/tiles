@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet"
 import initReactFastclick from "react-fastclick"
 import ReactCanvasConfetti from "react-canvas-confetti"
 import useLocalStorageState from "use-local-storage-state"
+import gitHubIcon from "./github.png"
 
 initReactFastclick()
 
@@ -105,15 +106,17 @@ export default function App() {
                 </ToggleButton>
                 <ToggleButton onClick={changeImage}>🔄 🖼️</ToggleButton>
             </div>
-            <div className="imageCredit">
-                <a href={`https://www.google.com/search?tbm=isch&q=${imageQuery}`} target="blank">
-                    Image
-                </a>{" "}
-                from{" "}
-                <a href="https://unsplash.com/" target="blank">
-                    Unsplash
+            <footer>
+                <div className="imageCredit">
+                    Image from{" "}
+                    <a href={`https://www.google.com/search?tbm=isch&q=${imageQuery}`} target="blank">
+                        Unsplash
+                    </a>
+                </div>
+                <a className="gitHub" href="https://github.com/mpetrovich/tileslide" target="blank">
+                    <img src={gitHubIcon} alt="GitHub repository" width="32" height="32" />
                 </a>
-            </div>
+            </footer>
         </StyledApp>
     )
 }
@@ -141,8 +144,13 @@ const StyledApp = styled.div`
         }
     }
 
-    .imageCredit {
+    footer {
+        display: flex;
+        align-items: center;
         padding: 15px 0 5px;
+    }
+
+    .imageCredit {
         text-align: center;
         color: #666;
 
@@ -153,6 +161,10 @@ const StyledApp = styled.div`
         a:visited {
             color: #666;
         }
+    }
+
+    .gitHub {
+        margin-left: auto;
     }
 `
 
