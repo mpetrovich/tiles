@@ -113,7 +113,7 @@ const StyledApp = styled.div`
     }
 
     .buttons {
-        margin: 20px 0;
+        margin: 15px 0;
         display: flex;
         align-items: center;
 
