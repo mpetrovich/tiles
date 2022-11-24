@@ -329,7 +329,11 @@ function Board({
                     <div style={{ textAlign: "right" }}>
                         Moves made: <code>{moveCount}</code>
                         <br />
-                        Previous best: <code>{previousBestMoveCount}</code>
+                        {previousBestMoveCount && (
+                            <>
+                                Previous best: <code>{previousBestMoveCount}</code>
+                            </>
+                        )}
                     </div>
                     <Button onClick={onHideStats} data-do-not-invert>
                         Try again
