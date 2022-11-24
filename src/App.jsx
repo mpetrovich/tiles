@@ -86,7 +86,7 @@ export default function App() {
                     onPointerDown={peek}
                     onPointerUp={unpeek}
                 >
-                    🫣
+                    {peeking ? "😮" : "🫣"}
                 </ToggleButton>
                 <ToggleButton onClick={changeImage}>🔄 🖼️</ToggleButton>
             </div>
