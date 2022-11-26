@@ -6,6 +6,9 @@ import { Helmet } from "react-helmet"
 import initReactFastclick from "react-fastclick"
 import ReactCanvasConfetti from "react-canvas-confetti"
 import useLocalStorageState from "use-local-storage-state"
+import images from "./images.json"
+
+const USE_UNSPLASH_API = false
 
 initReactFastclick()
 
@@ -19,8 +22,13 @@ export default function App() {
     const [loading, setLoading] = useState(false)
     const fetchImage = async () => {
         setLoading(true)
-        const response = await fetch("https://source.unsplash.com/random/800x800")
-        setImage(response.url)
+        if (USE_UNSPLASH_API) {
+            const response = await fetch("https://source.unsplash.com/random/800x800")
+            setImage(response.url)
+        } else {
+            const randomIndex = Math.floor(Math.random() * images.length)
+            setImage(images[randomIndex])
+        }
         setLoading(false)
     }
     const changeImage = () => {
