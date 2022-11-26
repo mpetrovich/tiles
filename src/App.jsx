@@ -11,6 +11,7 @@ import images from "./images.json"
 const USE_UNSPLASH_API = false
 
 initReactFastclick()
+shuffleArray(images)
 
 export default function App() {
     const [rowCount, setRowCount] = useState(4)
@@ -19,25 +20,30 @@ export default function App() {
     const tileSize = (viewportWidth - viewportPadding) / rowCount
 
     const [image, setImage] = useState("")
+    const [imageIndex, setImageIndex] = useState(0)
     const [loading, setLoading] = useState(false)
     const fetchImage = async () => {
-        setLoading(true)
-        if (USE_UNSPLASH_API) {
-            const response = await fetch("https://source.unsplash.com/random/800x800")
-            setImage(response.url)
-        } else {
-            const randomIndex = Math.floor(Math.random() * images.length)
-            setImage(images[randomIndex])
+        if (!USE_UNSPLASH_API) {
+            return
         }
+        setLoading(true)
+        const response = await fetch("https://source.unsplash.com/random/800x800")
+        setImage(response.url)
         setLoading(false)
     }
     const changeImage = () => {
         setImage("")
         fetchImage()
+        setImageIndex((imageIndex + 1) % images.length)
     }
     useEffect(() => {
         fetchImage()
     }, [])
+    useEffect(() => {
+        if (!USE_UNSPLASH_API) {
+            setImage(images[imageIndex])
+        }
+    }, [imageIndex])
 
     const colCount = rowCount
     const createBoard = () => shuffleBoard(newBoard(rowCount, colCount), Math.pow(rowCount, 5))
