@@ -167,6 +167,11 @@ const StyledApp = styled.div`
 
     .darkMode {
         cursor: pointer;
+        width: 60px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .imageCredit {
@@ -182,6 +187,11 @@ const StyledApp = styled.div`
     .gitHub {
         text-decoration: none;
         color: inherit;
+        width: 60px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 `
 
