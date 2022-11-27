@@ -114,6 +114,9 @@ export default function App() {
                 darkMode={darkMode}
             />
             <div className="buttons" style={{ fontSize: "3em" }}>
+                <ToggleButton onClick={changeImage}>
+                    <span data-do-not-invert>🔄 🖼️</span>
+                </ToggleButton>
                 <ToggleButton
                     style={{ minWidth: "200px" }}
                     selected={peeking}
@@ -125,9 +128,6 @@ export default function App() {
                     onPointerUp={unpeek}
                 >
                     <span data-do-not-invert>{peeking ? "😮" : "🫣"}</span>
-                </ToggleButton>
-                <ToggleButton onClick={changeImage}>
-                    <span data-do-not-invert>🔄 🖼️</span>
                 </ToggleButton>
             </div>
             <footer>
