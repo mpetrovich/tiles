@@ -27,5 +27,6 @@ const StyledTile = styled.div`
     color: #ccc;
     cursor: ${(props) => (props.tile !== null ? "pointer" : "default")};
     user-select: none;
+    touch-action: manipulation;
     filter: ${(props) => (props.darkMode ? "invert(1)" : "none")};
 `

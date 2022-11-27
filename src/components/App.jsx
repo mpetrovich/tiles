@@ -152,6 +152,7 @@ const StyledApp = styled.div`
     box-sizing: border-box;
     margin: 0 auto;
     width: ${(props) => props.rowCount * props.tileSize}px;
+    user-select: none;
 
     > * {
         margin: 10px 0;
