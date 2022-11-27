@@ -82,7 +82,7 @@ export default function Board({
                             moveCount={moveCount}
                             darkMode={darkMode}
                             key={col}
-                            onClick={() => tile && onClickTile(row, col)}
+                            onClick={() => tile !== null && onClickTile(row, col)}
                         />
                     ))
                 )}
