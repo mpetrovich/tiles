@@ -107,7 +107,7 @@ export default function Board({
                 angle={90}
                 spread={360}
                 startVelocity={50}
-                ticks={150}
+                ticks={120}
                 useWorker
             />
             {statsVisible && (
