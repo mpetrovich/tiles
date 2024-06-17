@@ -8,7 +8,7 @@ import ToggleButton from "./ToggleButton"
 import Board from "./Board"
 import { shuffleArray, shuffleBoard, newBoard, isComplete } from "../services/board"
 
-const USE_UNSPLASH_API = true
+const USE_UNSPLASH_API = false
 
 initReactFastclick()
 shuffleArray(images)
